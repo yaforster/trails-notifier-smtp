@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Trails test result</title>
+</head>
+<body style="margin:0;padding:16px;background-color:#ffffff;color:#202124;font-family:Arial,sans-serif;font-size:14px;line-height:1.5">
+<div style="max-width:560px;border-left:4px solid #137333;padding:4px 16px"
+     th:style="|max-width:560px;border-left:4px solid ${color};padding:4px 16px|">
+    <h1 style="margin:0 0 8px;font-size:20px;line-height:1.3;color:#137333"
+        th:style="|margin:0 0 8px;font-size:20px;line-height:1.3;color:${color}|"
+        th:text="${heading}">Passed — Trails run #42</h1>
+    <p style="margin:0" th:if="${linkResult}">
+        <a style="color:#185abc" href="https://example.com/runs/42" th:href="${resultUri}">View result</a>
+    </p>
+    <p style="margin:0;overflow-wrap:anywhere" th:if="${hasResult and !linkResult}"
+       th:text="|Result: ${resultUri}|">Result: /runs/42</p>
+    <p style="margin:8px 0 0;font-size:12px;overflow-wrap:anywhere" th:text="${details}">
+        Execution: c9c0c958-d0f6-4b56-a35c-e8f1ebc828a2
+    </p>
+</div>
+</body>
+</html>
