@@ -1,6 +1,6 @@
 package io.github.yaforster.trails.notifier.smtp;
 
-import io.github.yaforster.trails.sdk.notification.EmailRecipients;
+import io.github.yaforster.trails.core.notification.EmailRecipients;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -137,7 +137,8 @@ public record MailProperties(String host, Integer port, String sender, List<Stri
             throw new IllegalArgumentException(REQUIRED_PROPERTY_MESSAGE.formatted("trails.notifier.smtp.sender"));
         }
         try {
-            return new EmailRecipients(List.of(value)).values().getFirst();
+            return new EmailRecipients(List.of(value)).values()
+                                                      .getFirst();
         } catch (IllegalArgumentException exception) {
             throw new IllegalArgumentException(INVALID_EMAIL_MESSAGE.formatted("trails.notifier.smtp.sender"),
                     exception);

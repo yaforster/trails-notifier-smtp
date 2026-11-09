@@ -19,7 +19,9 @@ record MailContent(String subject, String plainText, String html) {
 
     static MailContent from(TerminalRunNotification notification) {
         long testRunId = notification.testRunId();
-        String resultText = notification.resultUri().map(uri -> "\nResult: " + uri).orElse("");
+        String resultText = notification.resultUri()
+                                        .map(uri -> "\nResult: " + uri)
+                                        .orElse("");
         Outcome outcome = outcome(notification);
         String heading = buildHeading(outcome, testRunId);
         String details = "Execution: " + notification.executionId();
@@ -27,7 +29,8 @@ record MailContent(String subject, String plainText, String html) {
         context.setVariable("color", outcome.color());
         context.setVariable("heading", heading);
         context.setVariable("details", details);
-        context.setVariable("hasResult", notification.resultUri().isPresent());
+        context.setVariable("hasResult", notification.resultUri()
+                                                     .isPresent());
         context.setVariable("resultUri", getResultUri(notification));
         context.setVariable("linkResult", getLinkToResultFlag(notification));
         String html = TEMPLATES.process("mail_body", context);
@@ -44,7 +47,8 @@ record MailContent(String subject, String plainText, String html) {
     }
 
     private static String buildMailSubject(long testRunId, Outcome outcome) {
-        String resultLabel = outcome.label().toUpperCase(Locale.ROOT);
+        String resultLabel = outcome.label()
+                                    .toUpperCase(Locale.ROOT);
         return "[" + resultLabel + "] Trails run #" + testRunId;
     }
 
@@ -53,11 +57,15 @@ record MailContent(String subject, String plainText, String html) {
     }
 
     private static Boolean getLinkToResultFlag(TerminalRunNotification notification) {
-        return notification.resultUri().map(MailContent::isWebUri).orElse(false);
+        return notification.resultUri()
+                           .map(MailContent::isWebUri)
+                           .orElse(false);
     }
 
     private static String getResultUri(TerminalRunNotification notification) {
-        return notification.resultUri().map(URI::toString).orElse("");
+        return notification.resultUri()
+                           .map(URI::toString)
+                           .orElse("");
     }
 
     private static boolean isWebUri(URI uri) {

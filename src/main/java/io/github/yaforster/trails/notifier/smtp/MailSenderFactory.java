@@ -20,10 +20,11 @@ final class MailSenderFactory {
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(properties.host());
         sender.setPort(properties.port());
-        properties.smtpAuthentication().ifPresent(authentication -> {
-            sender.setUsername(authentication.username());
-            sender.setPassword(authentication.password());
-        });
+        properties.smtpAuthentication()
+                  .ifPresent(authentication -> {
+                      sender.setUsername(authentication.username());
+                      sender.setPassword(authentication.password());
+                  });
         Properties props = createJavaMailProperties(properties);
         sender.setJavaMailProperties(props);
         return sender;
@@ -31,7 +32,8 @@ final class MailSenderFactory {
 
     private static Properties createJavaMailProperties(MailProperties properties) {
         Properties mail = new Properties();
-        mail.setProperty(PROP_ENABLE_AUTH, Boolean.toString(properties.smtpAuthentication().isPresent()));
+        mail.setProperty(PROP_ENABLE_AUTH, Boolean.toString(properties.smtpAuthentication()
+                                                                      .isPresent()));
         mail.setProperty(PROP_CONNECTION_TIMEOUT, String.valueOf(properties.connectionTimeoutMillis()));
         mail.setProperty(PROP_READ_TIMEOUT, String.valueOf(properties.readTimeoutMillis()));
         mail.setProperty(PROP_WRITE_TIMEOUT, String.valueOf(properties.writeTimeoutMillis()));

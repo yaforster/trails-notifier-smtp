@@ -44,7 +44,8 @@ final class MailNotifier implements Notifier {
 
     private List<String> recipients(TerminalRunNotification notification) {
         LinkedHashSet<String> recipients = new LinkedHashSet<>(properties.recipients());
-        notification.emailRecipients().ifPresent(requestRecipients -> recipients.addAll(requestRecipients.values()));
+        notification.emailRecipients()
+                    .ifPresent(requestRecipients -> recipients.addAll(requestRecipients.values()));
         return List.copyOf(recipients);
     }
 

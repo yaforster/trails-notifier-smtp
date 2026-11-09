@@ -14,10 +14,12 @@ class MailSenderFactoryTest {
         JavaMailSenderImpl sender = MailSenderFactory.create(properties(TLSMode.STARTTLS));
 
         assertThat(sender.getJavaMailProperties()).containsEntry("mail.smtp.starttls.enable", "true")
-                .containsEntry("mail.smtp.starttls.required", "true")
-                .containsEntry("mail.smtp.ssl.checkserveridentity", "true")
-                .containsEntry("mail.smtp.connectiontimeout", "1000").containsEntry("mail.smtp.timeout", "2000")
-                .containsEntry("mail.smtp.writetimeout", "3000").doesNotContainKey("mail.smtp.ssl.enable");
+                                                  .containsEntry("mail.smtp.starttls.required", "true")
+                                                  .containsEntry("mail.smtp.ssl.checkserveridentity", "true")
+                                                  .containsEntry("mail.smtp.connectiontimeout", "1000")
+                                                  .containsEntry("mail.smtp.timeout", "2000")
+                                                  .containsEntry("mail.smtp.writetimeout", "3000")
+                                                  .doesNotContainKey("mail.smtp.ssl.enable");
     }
 
     @Test
@@ -25,8 +27,8 @@ class MailSenderFactoryTest {
         JavaMailSenderImpl sender = MailSenderFactory.create(properties(TLSMode.IMPLICIT));
 
         assertThat(sender.getJavaMailProperties()).containsEntry("mail.smtp.ssl.enable", "true")
-                .containsEntry("mail.smtp.ssl.checkserveridentity", "true")
-                .doesNotContainKey("mail.smtp.starttls.enable");
+                                                  .containsEntry("mail.smtp.ssl.checkserveridentity", "true")
+                                                  .doesNotContainKey("mail.smtp.starttls.enable");
     }
 
     private static MailProperties properties(TLSMode tls) {

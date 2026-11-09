@@ -22,36 +22,34 @@ class MailPropertiesTest {
     @Test
     void shouldRejectPartialAuthentication() {
         assertThatIllegalArgumentException().isThrownBy(() -> new Authentication("mailer", null))
-                .withMessageContaining("must contain a valid username and password.");
+                                            .withMessageContaining("must contain a valid username and password.");
     }
 
     @Test
     void shouldRejectBlankAuthenticationCredentials() {
         assertThatIllegalArgumentException().isThrownBy(() -> new Authentication(" ", "secret"))
-                .withMessageContaining("must contain a valid username and password.");
+                                            .withMessageContaining("must contain a valid username and password.");
     }
 
     @Test
     void shouldRejectMissingTlsMode() {
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> properties("sender@example.test", List.of(), null, Optional.empty()))
-                .withMessage("trails.notifier.smtp.tls is required");
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> properties("sender@example.test", List.of(), null, Optional.empty()))
+                                            .withMessage("trails.notifier.smtp.tls is required");
     }
 
     @Test
     void shouldRejectOutOfRangePort() {
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> new MailProperties("smtp.example.test", 65_536, "sender@example.test", List.of(),
-                        TLSMode.STARTTLS, null, null, null, null))
-                .withMessage("trails.notifier.smtp.port must be between 1 and 65535");
+        assertThatIllegalArgumentException().isThrownBy(() -> new MailProperties("smtp.example.test", 65_536,
+                "sender@example.test", List.of(), TLSMode.STARTTLS, null, null, null, null))
+                                            .withMessage("trails.notifier.smtp.port must be between 1 and 65535");
     }
 
     @Test
     void shouldRejectNonPositiveTimeout() {
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> new MailProperties("smtp.example.test", 587, "sender@example.test", List.of(),
-                        TLSMode.STARTTLS, null, Duration.ZERO, null, null))
-                .withMessageContaining("connection-timeout must be positive");
+        assertThatIllegalArgumentException().isThrownBy(() -> new MailProperties("smtp.example.test", 587,
+                "sender@example.test", List.of(), TLSMode.STARTTLS, null, Duration.ZERO, null, null))
+                                            .withMessageContaining("connection-timeout must be positive");
     }
 
     private static MailProperties properties(String sender, List<String> recipients, TLSMode tls,

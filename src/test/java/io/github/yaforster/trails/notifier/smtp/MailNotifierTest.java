@@ -7,7 +7,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import io.github.yaforster.trails.core.data.TestRunTerminalStatus;
-import io.github.yaforster.trails.sdk.notification.EmailRecipients;
+import io.github.yaforster.trails.core.notification.EmailRecipients;
 import io.github.yaforster.trails.sdk.notification.TerminalRunNotification;
 import java.net.URI;
 import java.util.List;
@@ -42,11 +42,15 @@ class MailNotifierTest {
 
         ArgumentCaptor<MimeMessage> message = ArgumentCaptor.forClass(MimeMessage.class);
         verify(mailSender).send(message.capture());
-        assertThat(
-                List.of(message.getValue().getFrom()[0].toString(), message.getValue().getAllRecipients()[0].toString(),
-                        message.getValue().getAllRecipients()[1].toString(), message.getValue().getSubject()))
-                .containsExactly("sender@example.test", "alerts@example.test", "owner@example.test",
-                        "[PASSED] Trails run #42");
+        assertThat(List.of(message.getValue()
+                                  .getFrom()[0].toString(),
+                message.getValue()
+                       .getAllRecipients()[0].toString(),
+                message.getValue()
+                       .getAllRecipients()[1].toString(),
+                message.getValue()
+                       .getSubject())).containsExactly("sender@example.test", "alerts@example.test",
+                               "owner@example.test", "[PASSED] Trails run #42");
     }
 
     @Test
@@ -79,23 +83,37 @@ class MailNotifierTest {
         ArgumentCaptor<MimeMessage> sent = ArgumentCaptor.forClass(MimeMessage.class);
         verify(mailSender).send(sent.capture());
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        sent.getValue().writeTo(bytes);
+        sent.getValue()
+            .writeTo(bytes);
         MimeMessage decoded = new MimeMessage(Session.getInstance(new Properties()),
                 new ByteArrayInputStream(bytes.toByteArray()));
         Multipart alternatives = alternatives(decoded);
         org.assertj.core.api.SoftAssertions.assertSoftly(softly -> {
             try {
-                softly.assertThat(alternatives.getCount()).isEqualTo(2);
-                softly.assertThat(alternatives.getBodyPart(0).getContentType()).startsWith("text/plain;")
-                        .contains("UTF-8");
-                softly.assertThat(alternatives.getBodyPart(1).getContentType()).startsWith("text/html;")
-                        .contains("UTF-8");
-                softly.assertThat(alternatives.getBodyPart(0).getContent().toString())
-                        .contains(label + " — Trails run #42", notification.executionId().toString(), "?a=1&b=2");
-                String html = alternatives.getBodyPart(1).getContent().toString();
+                softly.assertThat(alternatives.getCount())
+                      .isEqualTo(2);
+                softly.assertThat(alternatives.getBodyPart(0)
+                                              .getContentType())
+                      .startsWith("text/plain;")
+                      .contains("UTF-8");
+                softly.assertThat(alternatives.getBodyPart(1)
+                                              .getContentType())
+                      .startsWith("text/html;")
+                      .contains("UTF-8");
+                softly.assertThat(alternatives.getBodyPart(0)
+                                              .getContent()
+                                              .toString())
+                      .contains(label + " — Trails run #42", notification.executionId()
+                                                                         .toString(),
+                              "?a=1&b=2");
+                String html = alternatives.getBodyPart(1)
+                                          .getContent()
+                                          .toString();
                 softly.assertThat(org.springframework.web.util.HtmlUtils.htmlUnescape(html))
-                        .contains(label + " — Trails run #42", notification.executionId().toString());
-                softly.assertThat(html).contains("href=\"https://trails.example.test/runs/42?a=1&amp;b=2\"");
+                      .contains(label + " — Trails run #42", notification.executionId()
+                                                                         .toString());
+                softly.assertThat(html)
+                      .contains("href=\"https://trails.example.test/runs/42?a=1&amp;b=2\"");
             } catch (Exception exception) {
                 throw new AssertionError("Cannot decode message alternatives", exception);
             }
@@ -105,8 +123,9 @@ class MailNotifierTest {
     @ParameterizedTest
     @org.junit.jupiter.params.provider.ValueSource(strings = {"javascript:alert(1)", "/runs/42"})
     void shouldRenderNonWebUrisAsText(String uri) {
-        assertThat(MailContent.from(notification(Optional.of(URI.create(uri)), Optional.empty())).html())
-                .contains("Result: " + uri).doesNotContain("href=");
+        assertThat(MailContent.from(notification(Optional.of(URI.create(uri)), Optional.empty()))
+                              .html()).contains("Result: " + uri)
+                                      .doesNotContain("href=");
     }
 
     private static Multipart alternatives(Part part) throws Exception {
